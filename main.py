@@ -43,8 +43,6 @@ while True:
   if random.randint(0,snow_rate) == 0:
     snow_flakes.append(snow.Snow(tick_ms))
 
-  print(len(snow_flakes))
-
 
   ##########
   # RENDER #
