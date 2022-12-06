@@ -1,2 +1,6 @@
-# christmas-unicorn
-Something festive for the Galactic Unicorn
+The Christmas Unicorn
+=====================
+
+Such a wonderful device deserves some festive love.
+
+An evolving Christmas card.
