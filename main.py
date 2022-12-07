@@ -5,7 +5,7 @@
 
 import random, time
 
-import snow
+import snow, tree
 
 from galactic import GalacticUnicorn
 from picographics import PicoGraphics, DISPLAY_GALACTIC_UNICORN
@@ -17,9 +17,14 @@ gfx = PicoGraphics(DISPLAY_GALACTIC_UNICORN)
 # Some universal settings
 background_pen = gfx.create_pen(0, 0, 0)
 
-# Set up the stuff we use for slowly falling snow
-snow_rate = 500
-snow_flakes = []
+# Set up the stuff we use for our various sections
+snow_rate_front = 500
+snow_flakes_front = []
+snow_rate_rear = 500
+snow_flakes_rear = []
+
+tree_rate = 500
+trees = []
 
 # Now we dive into the main loop; it's a hopefully fairly simple affair
 while True:
@@ -33,15 +38,34 @@ while True:
   # Run through all our sections, updating as appropriate
 
   # Snow, run through and update each flake
-  for flake in snow_flakes:
+  for flake in snow_flakes_front:
+    flake.update(tick_ms)
+  for flake in snow_flakes_rear:
     flake.update(tick_ms)
 
   # Quickly clean up anything that dropped off the bottom
-  snow_flakes = [flake for flake in snow_flakes if flake.y <= GalacticUnicorn.HEIGHT]
+  snow_flakes_front = [flake for flake in snow_flakes_front if flake.y <= GalacticUnicorn.HEIGHT]
+  snow_flakes_rear = [flake for flake in snow_flakes_rear if flake.y <= GalacticUnicorn.HEIGHT]
 
   # On a random whim, spawn some new ones
-  if random.randint(0,snow_rate) == 0:
-    snow_flakes.append(snow.Snow(tick_ms))
+  if random.randint(0,snow_rate_front) == 0:
+    snow_flakes_front.append(snow.Snow(tick_ms, gfx))
+  if random.randint(0,snow_rate_rear) == 0:
+    snow_flakes_rear.append(snow.Snow(tick_ms, gfx))
+
+
+  # Trees, follow a very similar process
+  for branch in trees:
+    branch.update(tick_ms)
+
+  # And any trees that are too old, remove
+  trees = [branch for branch in trees if branch.age < 16]
+
+  # And spawn new trees every now and then
+  if random.randint(0,tree_rate) == 0:
+    trees.append(tree.Tree(tick_ms, gfx))
+
+  print(len(trees))
 
 
   ##########
@@ -53,9 +77,20 @@ while True:
   gfx.set_pen(background_pen)
   gfx.clear()
 
-  # Snow next
-  for flake in snow_flakes:
-    flake.render(gfx)
+  # Rear snow, to be covered by other things
+  for flake in snow_flakes_rear:
+    flake.render()
+
+  # Trees
+  for branch in trees:
+    branch.render()
+
+  # Front snow, which appears in front of everything else
+  for flake in snow_flakes_front:
+    flake.render()
 
   # Last thing to do is to update the graphics
   gu.update(gfx)
+
+  # From examples: pause for a moment (important or the USB may fail)
+  time.sleep(0.001)

@@ -14,10 +14,11 @@ class Snow:
   twinkle_speed = 50
 
   # Initialise
-  def __init__(self, tick):
+  def __init__(self, tick, gfx):
     self.x = random.randint(0, GalacticUnicorn.WIDTH)
     self.y = 0
-    self.twinkle = 200
+    self.twinkle_pen = gfx.create_pen(200, 200, 200)
+    self.gfx = gfx
 
     self.fall_next = Snow.fall_speed + tick
     self.twinkle_next = Snow.twinkle_speed + tick
@@ -32,10 +33,11 @@ class Snow:
     # If it's time to twinkle, vary our brightness
     if tick > self.twinkle_next:
       self.twinkle = random.randint(100, 150)
+      self.twinkle_pen = self.gfx.create_pen(self.twinkle, self.twinkle, self.twinkle)
       self.twinkle_next += Snow.twinkle_speed
 
   # Render
-  def render(self, gfx):
+  def render(self):
     # Just draw a single, white, twinkling pixel
-    gfx.set_pen(gfx.create_pen(self.twinkle, self.twinkle, self.twinkle))
-    gfx.pixel(self.x, self.y)
+    self.gfx.set_pen(self.twinkle_pen)
+    self.gfx.pixel(self.x, self.y)
