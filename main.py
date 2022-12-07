@@ -26,11 +26,30 @@ snow_flakes_rear = []
 tree_rate = 500
 trees = []
 
+# Brightness handling
+gu.set_brightness(0.5)
+last_bright = 0
+
+
 # Now we dive into the main loop; it's a hopefully fairly simple affair
 while True:
 
   # Different things run on different timers; it's messy
   tick_ms = time.ticks_ms()
+
+  ######
+  # UI #
+  ######
+  # Check for buttons being pressed; brightness first
+  if gu.is_pressed(GalacticUnicorn.SWITCH_BRIGHTNESS_UP):
+    if tick_ms > last_bright + 200:
+      gu.adjust_brightness(0.1)
+      last_bright = tick_ms
+  if gu.is_pressed(GalacticUnicorn.SWITCH_BRIGHTNESS_DOWN):
+    if tick_ms > last_bright + 200:
+      gu.adjust_brightness(-0.1)
+      last_bright = tick_ms
+
 
   ##########
   # UPDATE #
