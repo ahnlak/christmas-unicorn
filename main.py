@@ -64,6 +64,7 @@ while True:
       last_volume = tick_ms
   if gu.is_pressed(GalacticUnicorn.SWITCH_VOLUME_DOWN):
     if tick_ms > last_volume + 200:
+      print("volume down to", gu.get_volume())
       gu.adjust_volume(-0.1)
       last_volume = tick_ms
 
