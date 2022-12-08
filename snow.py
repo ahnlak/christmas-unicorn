@@ -1,4 +1,6 @@
 # snow.py - part of the Christmas Unicorn
+#
+# Snowflakes that twinkle, fall and drift out of sight...
 # 
 # Copyright (C) 2022 Pete Favelle <ahnlak@ahnlak.com>
 # Released under the MIT License; see LICENSE for details

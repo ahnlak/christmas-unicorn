@@ -5,7 +5,7 @@
 
 import random, time
 
-import snow, tree
+import music, snow, tree
 
 from galactic import GalacticUnicorn
 from picographics import PicoGraphics, DISPLAY_GALACTIC_UNICORN
@@ -18,17 +18,24 @@ gfx = PicoGraphics(DISPLAY_GALACTIC_UNICORN)
 background_pen = gfx.create_pen(0, 0, 0)
 
 # Set up the stuff we use for our various sections
-snow_rate_front = 500
+snow_rate_front = 200
 snow_flakes_front = []
-snow_rate_rear = 500
+snow_rate_rear = 200
 snow_flakes_rear = []
 
-tree_rate = 500
+tree_rate = 1500
 trees = []
 
-# Brightness handling
+# Brightness and volume handling
 gu.set_brightness(0.5)
 last_bright = 0
+gu.set_volume(0.5)
+last_volume = 0
+
+
+# Set up the music handling
+music = music.Music(gu)
+last_music = 0
 
 
 # Now we dive into the main loop; it's a hopefully fairly simple affair
@@ -49,6 +56,22 @@ while True:
     if tick_ms > last_bright + 200:
       gu.adjust_brightness(-0.1)
       last_bright = tick_ms
+
+  # A similar operation for volume
+  if gu.is_pressed(GalacticUnicorn.SWITCH_VOLUME_UP):
+    if tick_ms > last_volume + 200:
+      gu.adjust_volume(0.1)
+      last_volume = tick_ms
+  if gu.is_pressed(GalacticUnicorn.SWITCH_VOLUME_DOWN):
+    if tick_ms > last_volume + 200:
+      gu.adjust_volume(-0.1)
+      last_volume = tick_ms
+
+  # Turn music on or off, thanks to the A button
+  if gu.is_pressed(GalacticUnicorn.SWITCH_A):
+    if tick_ms > last_music + 500:
+      music.toggle()
+      last_music = tick_ms
 
 
   ##########
@@ -82,9 +105,24 @@ while True:
 
   # And spawn new trees every now and then
   if random.randint(0,tree_rate) == 0:
-    trees.append(tree.Tree(tick_ms, gfx))
+    # Try to generate a tree
+    newtree = tree.Tree(tick_ms, gfx)
 
-  print(len(trees))
+    # Check to see if it's too close to any other before adding it to the list
+    free_space = True
+    for branch in trees:
+      # Don't do the checks for ageing trees
+      if branch.age > 0:
+        continue
+      if branch.x < newtree.x and branch.x > newtree.x - 7:
+        free_space = False
+        break
+      if branch.x > newtree.x and branch.x < newtree.x + 7:
+        free_space = False
+        break
+
+    if free_space:
+      trees.append(newtree)
 
 
   ##########
