@@ -7,7 +7,7 @@ An evolving Christmas card, featuring:
 
 * falling snow
 * growing trees
-* _festive tunes_
+* festive tune(s)
 * _sleighs_
 * _raindeer_
 * _presents_
